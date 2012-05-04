@@ -66,15 +66,15 @@ package
 		
 		
 		/* prog  :  type of programme to be carried out
-		 * 
+		 *
 		 *  'shyguy'  .. intercept > when in range take a shot or two > evade
-		 *  'pursu'   .. intercept > take some shots > seek > shots > 
+		 *  'pursu'   .. intercept > take some shots > seek > shots >
 		 * 				  evade when energy < 30 +- bravery factor
 		 * 				  if energy < 20 and bravery > 80  suicide!
 		 *  'suicidal' .. intercept, when in ranage, seekUnlimited (no avoidence + additional speed)
-		 *  
+		 *
 		*/
-		public var prog:String;	
+		public var prog:String;
 		
 		
 		public var state:String = "";
@@ -97,7 +97,7 @@ package
 			//eMaterial.shininess = 100;
 			eMaterial.ambient_brightness = 1.5;
 			//meshData = new Cube( { material:eMaterial, width:20, height:10, depth:20 } );
-			meshData =  Max3DS.load("enemy.3ds", { material:eMaterial, lighting:true, scaling:0.2, y:0, x:0, z:0, rotationX:90, loadersize:300 } );
+			meshData =  Max3DS.load(ddGame.ROOT_DIR + "enemy.3ds", { material:eMaterial, lighting:true, scaling:0.2, y:0, x:0, z:0, rotationX:90, loadersize:300 } );
 			meshData.scale(0.15);
 			
 			var myFilter:Array = new Array();
@@ -211,7 +211,7 @@ package
 		public function evaluate(x:Number, y:Number, xF:Number, yF:Number, playerSpeed, enemies:Array )
 		{
 			
-			var u:Number2D;	
+			var u:Number2D;
 			var Sr:Number2D = new Number2D;
 			var St:Number2D = new Number2D;
 			
@@ -384,14 +384,14 @@ package
 		{
 			
 			// Advance
-			mesh.yaw(fYaw);		
+			mesh.yaw(fYaw);
 			mesh.moveForward(fSpeed);
 			
 			
 			// Regenerate energy
 			if( energy < 1)
 				energy += 0.003;
-			else 
+			else
 				energy = 1;
 			
 			//fSpeed -= 0.2;

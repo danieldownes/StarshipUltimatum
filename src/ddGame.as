@@ -60,6 +60,7 @@
 	
 	public class ddGame extends Sprite
 	{
+		public static const ROOT_DIR:String = "games/starshipultimatum/";
 		
 		[Embed(source="/../images/playerlazer.png")] private var PlayerLazerImage:Class;
 		private var playerLazerBitmap:Bitmap = new PlayerLazerImage();
@@ -239,7 +240,7 @@
 		shipMaterial.shininess = 100;
 		//shipMaterial.specular = 50;
 		
-		playerShipMesh = Max3DS.load("ship.3ds", {material:shipMaterial, lighting:true, scaling:2, y:0, x:0, z:0, loadersize:300});
+		playerShipMesh = Max3DS.load(ROOT_DIR + "ship.3ds", {material:shipMaterial, lighting:true, scaling:2, y:0, x:0, z:0, loadersize:300});
 		// add the loader object to the scene
 		playerShipMesh.rotationX = 90;
 		playerShipMesh.scale(3);
@@ -275,7 +276,7 @@
 
 		// Create a new sphere object using a bitmap material representing the earth
 		var earthMaterial:BitmapMaterial = new BitmapMaterial(Cast.bitmap(earthBitmap),{smooth:true, precision:2});
-		sphere = new Sphere({material:earthMaterial, lighting:true, radius:75, segmentsW:10, segmentsH:10});
+		sphere = new Sphere({material:earthMaterial, lighting:true, radius:75, segmentsW:20, segmentsH:20});
 		sphere.x = 150;
 		var myFilter2:Array = new Array();
 		myFilter2.push(new GlowFilter(0xFFFFFF, 0.4, 15, 15, 2, 1, false, false));
