@@ -2,19 +2,20 @@ package
 {
 	import away3d.containers.Scene3D;
 	import away3d.primitives.Plane;
-	import gs.utils.tween.ArrayTweenInfo;
+	import flash.geom.Point;
+	import flash.geom.Vector3D;
+	//import gs.utils.tween.ArrayTweenInfo;
 	
 	import away3d.core.clip.RectangleClipping;
-	import away3d.core.math.Number2D;
+	
 	
 	import away3d.containers.ObjectContainer3D;
 	
-	import away3d.core.math.Number3D;
 	import away3d.core.base.Vertex;
 	
 	//import away3d.materials.WireColorMaterial;
 	//import away3d.materials.WireframeMaterial;
-	//import away3d.primitives.LineSegment;
+	import away3d.primitives.Cube;
 	
 	
 	import away3d.materials.ShadingColorMaterial;
@@ -35,7 +36,7 @@ package
 		private var utils:ddUtils = new ddUtils();
 		
 		public var mesh:ObjectContainer3D;
-		public var meshData:Object3DLoader;
+		public var meshData:Cube; // Loader3D???;
 		
 		
 		public var fSpeed = 0;
@@ -95,9 +96,9 @@ package
 			
 			var eMaterial:ShadingColorMaterial = new ShadingColorMaterial(0xff0000);
 			//eMaterial.shininess = 100;
-			eMaterial.ambient_brightness = 1.5;
-			//meshData = new Cube( { material:eMaterial, width:20, height:10, depth:20 } );
-			meshData =  Max3DS.load(ddGame.ROOT_DIR + "enemy.3ds", { material:eMaterial, lighting:true, scaling:0.2, y:0, x:0, z:0, rotationX:90, loadersize:300 } );
+			eMaterial.ambient = 1.5;
+			meshData = new Cube( { material:eMaterial, width:20, height:10, depth:20 } );
+			//meshData =  Max3DS.load(ddGame.ROOT_DIR + "enemy.3ds", { material:eMaterial, lighting:true, scaling:0.2, y:0, x:0, z:0, rotationX:90, loadersize:300 } );
 			meshData.scale(0.15);
 			
 			var myFilter:Array = new Array();
@@ -211,15 +212,15 @@ package
 		public function evaluate(x:Number, y:Number, xF:Number, yF:Number, playerSpeed, enemies:Array )
 		{
 			
-			var u:Number2D;
-			var Sr:Number2D = new Number2D;
-			var St:Number2D = new Number2D;
+			var u:Point;
+			var Sr:Vector3D = new Vector3D;
+			var St:Point = new Point;
 			
 			var targetX;
 			var targetY;
 			
-			DistancePlayer = utils.distance3D( mesh.position, new Number3D(x, 0, y) );
-			DistancePlayerF = utils.distance3D( mesh.position, new Number3D(xF, 0, yF) );
+			DistancePlayer = utils.distance3D( mesh.position, new Vector3D(x, 0, y) );
+			DistancePlayerF = utils.distance3D( mesh.position, new Vector3D(xF, 0, yF) );
 			
 			checkProgramme();
 			
@@ -227,8 +228,8 @@ package
 			
 			if ( state == "seek" )
 			{
-				u = VRotate2D(mesh.rotationY,(new Number2D(x - mesh.position.x ,y - mesh.position.z) ));
-				u.normalize();
+				u = VRotate2D(mesh.rotationY,(new Point(x - mesh.position.x ,y - mesh.position.z) ));
+				u.normalize(1);
 				
 				
 				if( u.x > -0.001 )
@@ -242,8 +243,8 @@ package
 			if ( state == "evade" || state == "evade300" )
 			{
 				
-				u = VRotate2D(mesh.rotationY,(new Number2D(x - mesh.position.x ,y - mesh.position.z) ));
-				u.normalize();
+				u = VRotate2D(mesh.rotationY,(new Point(x - mesh.position.x ,y - mesh.position.z) ));
+				u.normalize(1);
 				
 				
 				if( u.x < 0.05 )
@@ -263,16 +264,16 @@ package
 				
 				Sr.x = x - mesh.x;
 				Sr.y = y - mesh.z;
-				
+				Sr.z = 0;
 				var tc = Magnitude2D(Sr) / Vr;
 				St.x = x;
 				St.y = y; // + (speed * tc);
 
 				// changed this line to use St.x/St.y instead of x/y:
-				u = VRotate2D(mesh.rotationY, (new Number2D(St.x - mesh.x , St.y - mesh.z) ));
+				u = VRotate2D(mesh.rotationY, (new Point(St.x - mesh.x , St.y - mesh.z) ));
 
 
-				u.normalize();
+				u.normalize(1);
 				
 				// Only update the enemy's 'known player speed' "somtimes"
 				//  .. This will give a unquie lag time / reaction rate to that enemy.
@@ -305,12 +306,13 @@ package
 			
 			
 			// Collision avoidence of static world objects
-			if ( utils.distance3D( mesh.position, new Number3D(150, 0, 0) ) < 250 )
+			if ( utils.distance3D( mesh.position, new Vector3D(150, 0, 0) ) < 250 )
 			{
 				Sr.x = 150 - mesh.x;		// Temp Sphere/world
 				Sr.y = 0 - mesh.z;
+				Sr.z = 0;
 				tc = Magnitude2D(Sr) / Vr;
-				u = VRotate2D(mesh.rotationY, (new Number2D(mesh.x , mesh.z) ));
+				u = VRotate2D(mesh.rotationY, (new Point(mesh.x , mesh.z) ));
 				
 				// Override previous yaws
 				if( u.x < 1.5 )
@@ -327,7 +329,7 @@ package
 				Sr.x = x - mesh.x;		// Temp Sphere/world
 				Sr.y = y - mesh.z;
 				tc = Magnitude2D(Sr) / Vr;
-				u = VRotate2D(mesh.rotationY, (new Number2D(mesh.x , mesh.z) ));
+				u = VRotate2D(mesh.rotationY, (new Point(mesh.x , mesh.z) ));
 				
 				// Override previous yaws
 				if( u.x < 1.5 )
@@ -365,8 +367,9 @@ package
 			{
 				Sr.x = enemies[i].x - mesh.x;		// Temp Sphere/world
 				Sr.y = enemies[i].y - mesh.z;
+				Sr.z = 0;
 				tc = Magnitude2D(Sr) / Vr;
-				u = VRotate2D(mesh.rotationY, (new Number2D(mesh.x , mesh.z) ));
+				u = VRotate2D(mesh.rotationY, (new Point(mesh.x , mesh.z) ));
 				
 				// Override previous yaws
 				if( u.x < 1.5 )
@@ -478,24 +481,24 @@ package
 		private function die()
 		{
 			mesh.visible = false;
-			particalsExplosion.start(mesh.position, new Number3D( Math.random() * 360, Math.random() * 360, Math.random() * 360) );
+			particalsExplosion.start(mesh.position, new Vector3D( Math.random() * 360, Math.random() * 360, Math.random() * 360) );
 		}
 		
 		
 		
 		
 		
-		public function VRotate2D( angle, u:Number2D ):Number2D
+		public function VRotate2D( angle, u:Point ):Point
 		{
 			//float	x,y;
 
 			var x = u.x * Math.cos(DegreesToRadians(-angle)) + u.y * Math.sin(DegreesToRadians(-angle));
 			var y = -u.x * Math.sin(DegreesToRadians(-angle)) + u.y * Math.cos(DegreesToRadians(-angle));
 
-			return new Number2D( x, y);
+			return new Point( x, y);
 		}
 		
-		public function Magnitude2D( vec:Number2D )
+		public function Magnitude2D( vec:Vector3D )
 		{
 			return  Math.sqrt(vec.x * vec.x + vec.y * vec.y);
 		}

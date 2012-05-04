@@ -1,7 +1,7 @@
-package 
+package
 {
 	import away3d.containers.Scene3D;
-	import away3d.core.math.Number3D;
+	import flash.geom.Vector3D;
 	
 	import away3d.core.utils.Cast;
 	
@@ -42,8 +42,8 @@ package
 			
 			if (  type == "triangle_red" )			// Enemy shatterd hull
 			{
-				var eMaterial:ShadingColorMaterial = new ShadingColorMaterial(0xff0000);	
-				eMaterial.ambient_brightness = 100;
+				var eMaterial:ShadingColorMaterial = new ShadingColorMaterial(0xff0000);
+				eMaterial.ambient = 100;
 				
 				mesh = new Triangle( { material:eMaterial, lighting:true, bothsides:true, ownCanvas:true } );
 				
@@ -53,7 +53,7 @@ package
 			}
 			else //if ( type == "billboard_glowing")
 			{
-				var dibryBitmap:BitmapMaterial = new BitmapMaterial(Cast.bitmap(dibryBitmap),{smooth:true, precision:1});	
+				var dibryBitmap:BitmapMaterial = new BitmapMaterial(Cast.bitmap(dibryBitmap),{smooth:true, precision:1});
 				mesh = new Plane( { material:dibryBitmap,  segmentsW:1, segmentsH:1, ownCanvas:true } );
 				mesh.width = Math.random() * 15 + 7;
 				mesh.height = Math.random() * 15 + 7;
@@ -64,10 +64,10 @@ package
 			gameScene.addChild(mesh);
 			
 			inUse = false;
-			sType = type;	
+			sType = type;
 		}
 		
-		public function spawn(startPos:Number3D, startRot:Number3D, vVel:Number3D, vRot:Number3D):void
+		public function spawn(startPos:Vector3D, startRot:Vector3D, vVel:Vector3D, vRot:Vector3D):void
 		{
 			iLife = iLifeStart = 50;
 			mesh.position = startPos;

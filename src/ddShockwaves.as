@@ -1,10 +1,8 @@
-package 
+package
 {
 	import away3d.containers.Scene3D;
-	
-	import away3d.core.math.Number3D;
-	import away3d.core.math.Number2D;
-	
+	import flash.geom.Vector3D;
+		
 	import away3d.core.utils.Cast;
 	
 	import away3d.materials.BitmapMaterial;
@@ -33,19 +31,19 @@ package
 			for ( var n = 0; n < MaxCONST; n++)
 			{
 				var shockwaveBitmap:BitmapMaterial = new BitmapMaterial(Cast.bitmap(shockwaveBitmap),{smooth:true, precision:1});
-				mPlanes[n] = new Plane({material:shockwaveBitmap, segmentsW:1, segmentsH:1,width:25, height:25, ownCanvas:true});			
+				mPlanes[n] = new Plane({material:shockwaveBitmap, segmentsW:1, segmentsH:1,width:25, height:25, ownCanvas:true});
 				mPlanes[n].y = -5;
 				//plane.blendMode = BlendMode.MULTIPLY;
 				mPlanes[n].visible = false;
 				gameScene.addChild(mPlanes[n]);
-				vVel[n] = new Number3D;
+				vVel[n] = new Vector3D;
 			}
 		}
 		
-		public function newWave(x, y, decayRate, speed, vVelocity:Number3D):void
+		public function newWave(x, y, decayRate, speed, vVelocity:Vector3D):void
 		{
 			var i = -1;
-			// Find avilable 
+			// Find avilable
 			for( var n = 0; n < MaxCONST && i == -1; n++)
 			{
 				if( !mPlanes[n].visible)

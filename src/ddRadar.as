@@ -4,14 +4,11 @@ package
 	import away3d.containers.Scene3D;
 	import away3d.containers.View3D;
 	import away3d.core.clip.RectangleClipping;
-	import away3d.core.math.Number2D;
-	
-	import away3d.core.math.Number3D;
 	import away3d.core.base.Vertex;
-	
 	import away3d.materials.WireColorMaterial;
 	import away3d.materials.WireframeMaterial;
 	import away3d.primitives.LineSegment;
+	import flash.geom.Vector3D;
 	
 	import flash.display.Sprite;
 
@@ -33,10 +30,10 @@ package
 			// create a camera
 			cam = new Camera3D( { zoom:10, focus:100 } );
 			
-			cam.position = new Number3D(0,0 , 400);
-			cam.lookAt( new Number3D(0, 0, 0) );
+			cam.position = new Vector3D(0,0 , 400);
+			cam.lookAt( new Vector3D(0, 0, 0) );
 			
-			// create the viewport and attach it to the Sprite so we can mask and move it 
+			// create the viewport and attach it to the Sprite so we can mask and move it
 			View = new View3D({scene:viewScene,camera:cam,x:w/2,y:h/2});
 			var myClip:RectangleClipping = new RectangleClipping({minX:-w/2,minY:-h/2,maxX:w/2,maxY:h/2});
 			View.clipping = myClip;

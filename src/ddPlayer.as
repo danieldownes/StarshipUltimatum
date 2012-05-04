@@ -1,8 +1,6 @@
-package 
+package
 {
 	import away3d.containers.ObjectContainer3D;
-	import away3d.core.math.Number3D;
-	import away3d.core.math.MatrixAway3D;
 	import away3d.core.utils.Cast;
 	import away3d.materials.BitmapMaterial;
 	import away3d.materials.TransformBitmapMaterial;

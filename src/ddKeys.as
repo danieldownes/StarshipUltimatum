@@ -1,5 +1,6 @@
 ﻿package
 {
+	import flash.display.Sprite;
 	import flash.events.KeyboardEvent;
 	
 	public class ddKeys
@@ -11,7 +12,7 @@
 		public const SPACE_BAR:int = 32;
 		public var keysTracked:Array;
 
-		public function ddKeys(movieclip)
+		public function ddKeys(movieclip:Sprite)
 		{
 			keysTracked = new Array();
 			movieclip.stage.addEventListener(KeyboardEvent.KEY_DOWN, keyDownHandler);

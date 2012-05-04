@@ -1,9 +1,9 @@
-package 
+package
 {
 	import away3d.containers.ObjectContainer3D;
 	import away3d.containers.Scene3D;
-	import away3d.core.math.Number3D;
 	import away3d.core.base.Vertex;
+	import flash.geom.Vector3D;
 	
 	import away3d.primitives.LineSegment;
 	import away3d.materials.WireframeMaterial;
@@ -35,7 +35,7 @@ package
 			}
 		}
 		
-		public function update(playerRig:ObjectContainer3D, fShipSpeed):void 
+		public function update(playerRig:ObjectContainer3D, fShipSpeed):void
 		{
 			//trace( stars[1].start.z );
 			
@@ -44,7 +44,7 @@ package
 			{
 				var tRadians = playerRig.rotationY * 0.01745;
 				
-				var tDist = utils.distance3D( new Number3D( stars[n].start.x, playerRig.position.y, stars[n].start.z)
+				var tDist = utils.distance3D( new Vector3D( stars[n].start.x, playerRig.position.y, stars[n].start.z)
 								, playerRig.position);
 				
 				// Is star still in player's view range?
@@ -52,18 +52,18 @@ package
 				{
 					
 					
-					// Reposision star to be in player's view     //  Math.floor(Math.random() * 200) - 100  // (Math.cos(tRadians) * 20 
+					// Reposision star to be in player's view     //  Math.floor(Math.random() * 200) - 100  // (Math.cos(tRadians) * 20
 					var tRan = Math.random() * 4 - 2
 					stars[n].start = new Vertex(playerRig.position.x + (Math.sin(tRadians + tRan) * 800),
 												stars[n].start.y,
-												playerRig.position.z + (Math.cos(tRadians + tRan) * 800) ); 
+												playerRig.position.z + (Math.cos(tRadians + tRan) * 800) );
 				}
 				
 				
-				// elongate effect			
+				// elongate effect
 				stars[n].end = new Vertex( stars[n].start.x + (Math.sin(tRadians) * (fShipSpeed *1.5) ),
-										   stars[n].start.y + 0.3, 
-										   stars[n].start.	z + (Math.cos(tRadians) * (fShipSpeed *1.5)) );	
+										   stars[n].start.y + 0.3,
+										   stars[n].start.	z + (Math.cos(tRadians) * (fShipSpeed *1.5)) );
 			}
 			
 			

@@ -1,11 +1,11 @@
-package 
+package
 {
 	import away3d.containers.Scene3D;
-	import away3d.core.math.Number3D;
 	import away3d.core.utils.Cast;
 	import away3d.materials.BitmapMaterial;
 	import away3d.materials.TransformBitmapMaterial;
 	import away3d.primitives.Plane;
+	import flash.geom.Vector3D;
 	
 	import flash.display.Bitmap;
 
@@ -15,7 +15,7 @@ package
 		public var mPlanes = new Array();
 		public var iShotsLife = new Array();
 		public var fShotsUsed = 0;
-		private var fShotsSpeed = new Array();		
+		private var fShotsSpeed = new Array();
 		private var fShotsSpeedCONST = 6.0;
 		public var iMax = 5;
 		public var shotIntervalN = 0;
@@ -39,7 +39,7 @@ package
 			}
 		}
 		
-		public function newShot(startPos:Number3D, startRot:Number3D, fSpeed:Number):void
+		public function newShot(startPos:Vector3D, startRot:Vector3D, fSpeed:Number):void
 		{
 			var i = -1;
 			

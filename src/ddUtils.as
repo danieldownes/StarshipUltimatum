@@ -1,8 +1,8 @@
 package
 {
-
-	import away3d.core.math.Number2D;
-	import away3d.core.math.Number3D;
+	//import flash.geom.;
+	import flash.geom.Point;
+	import flash.geom.Vector3D;
 	
 	public class ddUtils
 	{
@@ -13,15 +13,15 @@ package
 		}
 		*/
 		
-		public function distance3D( firstObject:Number3D, secondObject:Number3D ):Number
+		public function distance3D( firstObject:Vector3D, secondObject:Vector3D ):Number
 		{
 			return Math.sqrt( ( firstObject.x - secondObject.x ) * ( firstObject.x - secondObject.x ) + ( firstObject.y - secondObject.y ) * ( firstObject.y - secondObject.y ) + ( firstObject.z - secondObject.z ) * ( firstObject.z - secondObject.z ) );
 		}
 		
 		
-		public function MoveInDirection(dir, speed):Number2D
+		public function MoveInDirection(dir, speed):Point
 		{
-			var sOut:Number2D = new Number2D;
+			var sOut:Point = new Point;
 			
 			//trace(Math.sin(dir));
 			sOut.x = Math.sin(dir / 57.295) * speed;
@@ -30,7 +30,7 @@ package
 			return(sOut);
 		}
 		
-		public function normLinear(val, maxValue, scale)
+		public function normLinear(val:Number, maxValue:Number, scale:Number)
 		{
 			//if( val == 0)
 			//	return 0;

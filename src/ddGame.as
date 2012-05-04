@@ -1,9 +1,12 @@
 ﻿package
 {
 	import away3d.core.base.*;
-	import away3d.core.light.AmbientLight;
-	import away3d.core.project.MovieClipSpriteProjector;
-	import gs.utils.tween.ArrayTweenInfo;
+	import away3d.lights.AmbientLight3D;
+	import away3d.primitives.Cube;
+	//import away3d.core.project.MovieClipSpriteProjector;
+	import flash.geom.Point;
+	import flash.geom.Vector3D;
+	//import gs.utils.tween.ArrayTweenInfo;
 	
 	import away3d.cameras.Camera3D;
 	import away3d.containers.ObjectContainer3D;
@@ -12,12 +15,10 @@
 	
 	import away3d.loaders.*;
 	
-	import away3d.core.math.Number2D;
-	import away3d.core.math.Number3D;
-	import away3d.core.math.MatrixAway3D;
+	//import away3d.core.math.MatrixAway3D;
 	import away3d.core.utils.Cast;
 	
-	import away3d.core.light.AmbientLight;
+	import away3d.lights.AmbientLight3D;
 	
 	import away3d.materials.BitmapMaterial;
 	import away3d.materials.TransformBitmapMaterial;
@@ -60,12 +61,13 @@
 	
 	public class ddGame extends Sprite
 	{
-		public static const ROOT_DIR:String = "games/starshipultimatum/";
+		//public static const ROOT_DIR:String = "games/starshipultimatum/";
+		public static const ROOT_DIR:String = "../meshes/";
 		
-		[Embed(source="/../images/playerlazer.png")] private var PlayerLazerImage:Class;
+		[Embed(source="../images/playerlazer.png")] private var PlayerLazerImage:Class;
 		private var playerLazerBitmap:Bitmap = new PlayerLazerImage();
 		
-		[Embed(source="/../images/earth.jpg")] private var EarthImage:Class;
+		[Embed(source="../images/earth.jpg")] private var EarthImage:Class;
 		private var earthBitmap:Bitmap = new EarthImage();
 		
 		
@@ -87,7 +89,7 @@
 		private var playerDummyF:ObjectContainer3D;   // Front dummy
 		
 		private var playerShip:ObjectContainer3D;
-		private var playerShipMesh:Object3DLoader;
+		private var playerShipMesh:Cube;
 		private var fShipSpeed = 0;
 		private static const playerAccCONST = 0.2;
 		private static const playerSpeedMaxCONST = 9;
@@ -204,7 +206,7 @@
 
 		// Create a new camera, passing some initialisation parameters
 		camera = new Camera3D({zoom:25, focus:30, x:0, y:350, z:-370});
-		camera.lookAt(new Number3D(0, 0, 0));
+		camera.lookAt(new Vector3D(0, 0, 0));
 
 		// Create a new view that encapsulates the scene and the camera
 		view = new View3D({scene:scene, camera:camera});
@@ -240,7 +242,8 @@
 		shipMaterial.shininess = 100;
 		//shipMaterial.specular = 50;
 		
-		playerShipMesh = Max3DS.load(ROOT_DIR + "ship.3ds", {material:shipMaterial, lighting:true, scaling:2, y:0, x:0, z:0, loadersize:300});
+		playerShipMesh = new Cube( { width:20, height:10, depth:20 } );
+		//playerShipMesh = Max3DS.load(ROOT_DIR + "ship.3ds", {material:shipMaterial, lighting:true, scaling:2, y:0, x:0, z:0, loadersize:300});
 		// add the loader object to the scene
 		playerShipMesh.rotationX = 90;
 		playerShipMesh.scale(3);
@@ -301,10 +304,8 @@
 		
 		// create a new directional white light source with specific ambient, diffuse and specular parameters
 		var light:DirectionalLight3D = new DirectionalLight3D({color:0xFFFFFF, ambient:0.3, diffuse:0.6, specular:0.9});
-		light.x = 300;
-		light.z = 400;
-		light.y = 500;
-		scene.addChild(light);
+		light.direction = new Vector3D(3, 4, 5);
+		scene.addLight(light);
 		
 		//var lightAmbient:AmbientLight3D = new AmbientLight3D( { color:0xFFFFFF, ambient:0.2 } );
 		//scene.addChild(lightAmbient);
@@ -350,7 +351,7 @@
     private function loop(event:Event):void
 	{
 		// Prevent camera position delay
-		camera.position = new Number3D(0, 400, -400);
+		camera.position = new Vector3D(0, 400, -400);
 		
 		var i;
 		
@@ -523,12 +524,12 @@
 		
 		updateUiEnergy();
 
-		sceneRader.update();
+		sceneRader.autoUpdate = true; // update();
 		viewRadar.View.render();
 
 		
 		// Render the 3D scene
-		scene.update();
+		//scene.update();
 		view.render();
 		
     }
@@ -557,7 +558,7 @@
 	private function hitEnemy(n, type)
 	{
 		var damage;
-		var temp2d:Number2D;
+		var temp2d:Point;
 		
 		if( type == "lazer")
 			damage = 0.2;
@@ -568,7 +569,7 @@
 		{
 			// Effect
 			temp2d = utils.MoveInDirection(mEmemies[n].mesh.rotationY, mEmemies[n].fSpeed * 0.5)
-			cShockwaves.newWave(mEmemies[n].mesh.position.x, mEmemies[n].mesh.position.z, 0.04, 0.5, new Number3D(temp2d.x, 0, temp2d.y));
+			cShockwaves.newWave(mEmemies[n].mesh.position.x, mEmemies[n].mesh.position.z, 0.04, 0.5, new Vector3D(temp2d.x, 0, temp2d.y));
 			
 			viewRadar.setActive(n, false);
 			
@@ -586,7 +587,7 @@
 		}else
 		{
 			// Only damaged
-			partEnemyMinior.start(mEmemies[n].mesh.position, new Number3D( Math.random() * 360, Math.random() * 360, Math.random() * 360));
+			partEnemyMinior.start(mEmemies[n].mesh.position, new Vector3D( Math.random() * 360, Math.random() * 360, Math.random() * 360));
 		}
 	}
 	
@@ -607,7 +608,7 @@
 		
 	}
 	
-	private function newShot(startPos:Number3D, startRot:Number3D):void
+	private function newShot(startPos:Vector3D, startRot:Vector3D):void
 	{
 		var i = -1;
 		// Find avilable shot
