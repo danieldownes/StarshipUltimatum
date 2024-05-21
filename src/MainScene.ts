@@ -1,7 +1,6 @@
 import * as THREE from 'three'
 
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
-import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader'
+import InputKeys from './InputKeys.ts'
 
 import Player from './Player.ts'
 import BulletFactory from './BulletFactory.ts'
@@ -12,13 +11,15 @@ export default class MainScene extends THREE.Scene
 	private readonly root: THREE.Object3D
 	private readonly camera: THREE.PerspectiveCamera
 
-	private readonly keyDown = new Set<string>()
+	private readonly KeyIsDown = new Set<string>()
+
+	private readonly inputKeys: InputKeys
+
+	private player: Player = new Player()
+	private enemyFactory: EnemeyFactory = new EnemeyFactory()
+	private bulletFactory: BulletFactory = new BulletFactory()
 
 	private directionVector = new THREE.Vector3()
-
-	private player: Player
-	private enemyFactory: EnemeyFactory
-	private bulletFactory: BulletFactory
 	
 
 	constructor(camera: THREE.PerspectiveCamera)
@@ -28,6 +29,8 @@ export default class MainScene extends THREE.Scene
 		this.add(this.root)
 
 		this.camera = camera
+
+		this.inputKeys = new InputKeys()
 	}
 
 	async initialize()
@@ -42,7 +45,7 @@ export default class MainScene extends THREE.Scene
 		this.add(light)
 
 
-		this.player = new Player()
+		this.player 
 		this.add(this.player)
 		await this.player.Init()
 
@@ -63,28 +66,23 @@ export default class MainScene extends THREE.Scene
 
 		this.player.add(this.camera)
 
-
-		document.addEventListener('keydown', this.handleKeyDown)
-		document.addEventListener('keyup', this.handleKeyUp)
+		this.inputKeys.OnKeyDown.subscribe((s: string) =>
+			{  
+				if( s === ' ')
+					this.spawnBullet()
+			});
+		this.inputKeys.OnKeyUp.subscribe((s: string) =>
+			{
+				console.log("L: " + s)
+			});
 	}
 
-	spawnBullet() {
+	spawnBullet()
+	{
 		console.log("Spawn")
 		this.bulletFactory.Spawn(this.player, this.directionVector)
 	}
 
-	private handleKeyDown = (event: KeyboardEvent) => {
-		this.keyDown.add(event.key.toLowerCase())
-	}
-
-	private handleKeyUp = (event: KeyboardEvent) => {
-		this.keyDown.delete(event.key.toLowerCase())
-
-		if (event.key === ' ')
-		{
-			this.spawnBullet()
-		}
-	}
 
 	private updateInput()
 	{
@@ -93,15 +91,15 @@ export default class MainScene extends THREE.Scene
 			return
 		}
 
-		const shiftKey = this.keyDown.has('shift')
+		const shiftKey = this.inputKeys.KeyIsDown.has('shift')
 
 		if (!shiftKey)
 		{
-			if (this.keyDown.has('a') || this.keyDown.has('arrowleft'))
+			if (this.inputKeys.KeyIsDown.has('a') || this.inputKeys.KeyIsDown.has('arrowleft'))
 			{
 				this.player.rotateY(0.02)
 			}
-			else if (this.keyDown.has('d') || this.keyDown.has('arrowright'))
+			else if (this.inputKeys.KeyIsDown.has('d') || this.inputKeys.KeyIsDown.has('arrowright'))
 			{
 				this.player.rotateY(-0.02)
 			}
@@ -113,11 +111,11 @@ export default class MainScene extends THREE.Scene
 
 		const speed = 0.1
 
-		if (this.keyDown.has('w') || this.keyDown.has('arrowup'))
+		if (this.inputKeys.KeyIsDown.has('w') || this.inputKeys.KeyIsDown.has('arrowup'))
 		{
 			this.player.position.add(dir.clone().multiplyScalar(speed))
 		}
-		else if (this.keyDown.has('s') || this.keyDown.has('arrowdown'))
+		else if (this.inputKeys.KeyIsDown.has('s') || this.inputKeys.KeyIsDown.has('arrowdown'))
 		{
 			this.player.position.add(dir.clone().multiplyScalar(-speed))
 		}
@@ -127,14 +125,14 @@ export default class MainScene extends THREE.Scene
 			const strafeDir = dir.clone()
 			const upVector = new THREE.Vector3(0, 1, 0)
 
-			if (this.keyDown.has('a') || this.keyDown.has('arrowleft'))
+			if (this.KeyIsDown.has('a') || this.KeyIsDown.has('arrowleft'))
 			{
 				this.player.position.add(
 					strafeDir.applyAxisAngle(upVector, Math.PI * 0.5)
 						.multiplyScalar(speed)
 				)
 			}
-			else if (this.keyDown.has('d') || this.keyDown.has('arrowright'))
+			else if (this.KeyIsDown.has('d') || this.KeyIsDown.has('arrowright'))
 			{
 				this.player.position.add(
 					strafeDir.applyAxisAngle(upVector, Math.PI * -0.5)

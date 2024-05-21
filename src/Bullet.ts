@@ -1,5 +1,4 @@
 import {
-	Object3D,
 	Group,
 	Vector3
 } from 'three'

@@ -14,6 +14,7 @@
     "vite": "^5.2.0"
   },
   "dependencies": {
+    "strongly-typed-events": "^3.0.11",
     "three": "^0.164.0"
   }
 }

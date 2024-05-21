@@ -2,7 +2,8 @@ import {
 	Object3D,
 	Group,
 	Vector3,
-	Box3
+	Box3,
+	MeshBasicMaterial
 } from 'three'
 
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
@@ -15,10 +16,11 @@ export default class BulletFactory extends Object3D
 	private bullets: Bullet[] = []
 	private material?: MTLLoader.MaterialCreator
 
-	public readonly group: Group	
+	private group: Group | undefined
 
 	private readonly objLoader = new OBJLoader()
 	private readonly mtlLoader = new MTLLoader()
+
 
 	public async Init()
 	{
@@ -35,6 +37,7 @@ export default class BulletFactory extends Object3D
 
 		const bulletModel = await this.objLoader.loadAsync('assets/cannonBall.obj')
 
+		bulletModel.scale.set(0.1, 0.1, 1)
 		player.getWorldDirection(direction)
 
 		const aabb = new Box3().setFromObject(player)

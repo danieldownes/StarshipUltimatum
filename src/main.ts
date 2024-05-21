@@ -5,7 +5,8 @@ const width = window.innerWidth
 const height = window.innerHeight
 
 const renderer = new THREE.WebGLRenderer({
-	canvas: document.getElementById('app') as HTMLCanvasElement
+	canvas: document.getElementById('app') as HTMLCanvasElement,
+	antialias: true
 })
 renderer.setSize(width, height)
 

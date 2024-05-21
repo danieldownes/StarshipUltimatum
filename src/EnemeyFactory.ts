@@ -14,7 +14,7 @@ export default class EnemeyFactory extends Object3D
 	private readonly objLoader = new OBJLoader()
 	private readonly mtlLoader = new MTLLoader()
 
-	public readonly group: Group
+	public readonly group: Group | undefined 
 	private readonly velocity = new Vector3()
 
 	private isDead = false
