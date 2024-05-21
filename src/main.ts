@@ -16,7 +16,7 @@ scene.initialize()
 
 function tick()
 {
-  scene.update()
+	scene.update()
 	renderer.render(scene, mainCamera)
 	requestAnimationFrame(tick)
 }

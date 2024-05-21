@@ -9,8 +9,6 @@ import EnemeyFactory from './EnemeyFactory.ts'
 
 export default class MainScene extends THREE.Scene
 {
-	private readonly mtlLoader = new MTLLoader()
-
 	private readonly root: THREE.Object3D
 	private readonly camera: THREE.PerspectiveCamera
 
@@ -20,7 +18,7 @@ export default class MainScene extends THREE.Scene
 
 	private player: Player
 	private enemyFactory: EnemeyFactory
-
+	private bulletFactory: BulletFactory
 	
 
 	constructor(camera: THREE.PerspectiveCamera)
@@ -52,6 +50,10 @@ export default class MainScene extends THREE.Scene
 		this.add(this.enemyFactory)
 		await this.enemyFactory.Init()
 
+		this.bulletFactory = new BulletFactory()
+		this.add(this.bulletFactory)
+		await this.bulletFactory.Init()
+
 
 		this.camera.position.y = 7
 		this.camera.position.z = -2
@@ -66,6 +68,11 @@ export default class MainScene extends THREE.Scene
 		document.addEventListener('keyup', this.handleKeyUp)
 	}
 
+	spawnBullet() {
+		console.log("Spawn")
+		this.bulletFactory.Spawn(this.player, this.directionVector)
+	}
+
 	private handleKeyDown = (event: KeyboardEvent) => {
 		this.keyDown.add(event.key.toLowerCase())
 	}
@@ -75,7 +82,7 @@ export default class MainScene extends THREE.Scene
 
 		if (event.key === ' ')
 		{
-			//this.createBullet()
+			this.spawnBullet()
 		}
 	}
 
@@ -140,6 +147,7 @@ export default class MainScene extends THREE.Scene
 	update()
 	{
 		this.updateInput()
-		//this.updateBullets()
+		if( this.bulletFactory)
+			this.bulletFactory.Update()
 	}
 }

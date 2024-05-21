@@ -1,7 +1,8 @@
 import {
 	Object3D,
 	Group,
-	Vector3
+	Vector3,
+	Box3
 } from 'three'
 
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
@@ -12,39 +13,39 @@ import Bullet from './Bullet.ts'
 export default class BulletFactory extends Object3D
 {
 	private bullets: Bullet[] = []
-	private bulletMtl?: MTLLoader.MaterialCreator
+	private material?: MTLLoader.MaterialCreator
 
-	public readonly group: Group
+	public readonly group: Group	
 
+	private readonly objLoader = new OBJLoader()
+	private readonly mtlLoader = new MTLLoader()
 
 	public async Init()
 	{
-		this.bulletMtl = await this.mtlLoader.loadAsync('assets/cannonBall.mtl')
-		this.bulletMtl.preload()
+		this.material = await this.mtlLoader.loadAsync('assets/cannonBall.mtl')
+		this.material.preload()
 	}
 	
-
-	/*
-	private async createBullet()
+	async Spawn(player: Object3D, direction: Vector3)
 	{
-		if (this.bulletMtl)
+		if (this.material)
 		{
-			this.objLoader.setMaterials(this.bulletMtl)
+			this.objLoader.setMaterials(this.material)
 		}
 
 		const bulletModel = await this.objLoader.loadAsync('assets/cannonBall.obj')
 
-		this.camera.getWorldDirection(this.directionVector)
+		player.getWorldDirection(direction)
 
-		const aabb = new THREE.Box3().setFromObject(this.player)
-		const size = aabb.getSize(new THREE.Vector3())
+		const aabb = new Box3().setFromObject(player)
+		const size = aabb.getSize(new Vector3())
 
-		const vec = this.player.position.clone()
+		const vec = player.position.clone()
 		vec.y += 0.06
 
 		bulletModel.position.add(
 			vec.add(
-				this.directionVector.clone().multiplyScalar(size.z * 0.5)
+				direction.clone().multiplyScalar(size.z * 0.5)
 			)
 		)
 
@@ -52,27 +53,27 @@ export default class BulletFactory extends Object3D
 		bulletModel.children.forEach(child => child.rotateX(Math.PI * -0.5))
 
 		// use the same rotation as as the gun
-		bulletModel.rotation.copy(this.player.rotation)
+		bulletModel.rotation.copy(player.rotation)
 
 		this.add(bulletModel)
 
 		const b = new Bullet(bulletModel)
 		b.setVelocity(
-			this.directionVector.x * 0.2,
-			this.directionVector.y * 0.2,
-			this.directionVector.z * 0.2
+			direction.x * 0.2,
+			direction.y * 0.2,
+			direction.z * 0.2
 		)
 
 		this.bullets.push(b)
 	}
 
-	private updateBullets()
+	public Update()
 	{
 		for (let i = 0; i < this.bullets.length; ++i)
 		{
 			const b = this.bullets[i]
 			b.update()
-
+			/*
 			if (b.shouldRemove)
 			{
 				this.remove(b.group)
@@ -81,23 +82,24 @@ export default class BulletFactory extends Object3D
 			}
 			else
 			{
-				for (let j = 0; j < this.targets.length; ++j)
+				for (let j = 0; j < this.bullets.length; ++j)
 				{
-					const target = this.targets[j]
-					if (target.position.distanceToSquared(b.group.position) < 0.05)
+					const bullet = this.bullets[j]
+					if (bullet.group.position.distanceToSquared(b.group.position) < 0.05)
 					{
 						this.remove(b.group)
 						this.bullets.splice(i, 1)
 						i--
 
-						target.visible = false
+						bullet.group.visible = false
 						setTimeout(() => {
-							target.visible = true
+							bullet.group.visible = true
 						}, 1000)
 					}
 				}
 			}
+			*/
 		}
 	}
-	*/
+	
 }
