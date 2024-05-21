@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { ThreeMFLoader } from 'three/examples/jsm/Addons.js'
 
 const width = window.innerWidth
 const height = window.innerHeight
@@ -10,6 +9,7 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(width, height)
 
 const mainCamera = new THREE.PerspectiveCamera(60, width / height, 0.1, 100)
+mainCamera.position.y = 1
 
 const scene = new THREE.Scene()
 const geo = new THREE.BoxGeometry()
@@ -26,19 +26,14 @@ const light = new THREE.DirectionalLight(0xFFFFFF, 1)
 light.position.set(0, 4, 2)
 scene.add(light)
 
+const gridHelper = new THREE.GridHelper(20, 20, 'teal', 'darkgray')
+gridHelper.position.y = -0.01
+scene.add(gridHelper)
 
 function tick()
 {
-	//scene.update()
 	renderer.render(scene, mainCamera)
 	requestAnimationFrame(tick)
 }
 
-//init()
 tick()
-
-/*
-const gridHelper = new GridHelper(20, 20, 'teal', 'darkgray')
-    gridHelper.position.y = -0.01
-    scene.add(gridHelper)
-    */
