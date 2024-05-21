@@ -1,15 +1,16 @@
 import {
+	Object3D,
 	Group,
 	Vector3
 } from 'three'
 
-export default class Bullet
+export default class Bullet extends Object3D
 {
-	public readonly group: Group
 	private readonly velocity = new Vector3()
 
 	private isDead = false
 
+	/*
 	constructor(group: Group)
 	{
 		this.group = group
@@ -18,7 +19,7 @@ export default class Bullet
 			this.isDead = true
 		}, 1000)
 	}
-
+*/
 	get shouldRemove()
 	{
 		return this.isDead
@@ -31,8 +32,9 @@ export default class Bullet
 
 	update()
 	{
-		this.group.position.x += this.velocity.x
-		this.group.position.y += this.velocity.y
-		this.group.position.z += this.velocity.z
+		this.position.x += this.velocity.x
+		this.position.y += this.velocity.y
+		this.position.z += this.velocity.z
 	}
+	
 }

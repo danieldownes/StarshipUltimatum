@@ -2,76 +2,65 @@ import * as THREE from 'three'
 
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader'
-import Bullet from './Bullet.ts'
+
+import Player from './Player.ts'
+import BulletFactory from './BulletFactory.ts'
+import EnemeyFactory from './EnemeyFactory.ts'
 
 export default class MainScene extends THREE.Scene
 {
-	private readonly objLoader = new OBJLoader()
 	private readonly mtlLoader = new MTLLoader()
 
+	private readonly root: THREE.Object3D
 	private readonly camera: THREE.PerspectiveCamera
 
 	private readonly keyDown = new Set<string>()
 
-	private blaster?: THREE.Group
-	private bulletMtl?: MTLLoader.MaterialCreator
-
 	private directionVector = new THREE.Vector3()
 
-	private bullets: Bullet[] = []
-	private targets: THREE.Group[] = []
+	private player: Player
+	private enemyFactory: EnemeyFactory
+
+	
 
 	constructor(camera: THREE.PerspectiveCamera)
 	{
 		super()
+		this.root = new THREE.Object3D
+		this.add(this.root)
+
 		this.camera = camera
 	}
 
 	async initialize()
 	{
-		// load a shared MTL (Material Template Library) for the targets
-		const targetMtl = await this.mtlLoader.loadAsync('assets/ship_dark.mtl')
-		targetMtl.preload()
-
-		this.bulletMtl = await this.mtlLoader.loadAsync('assets/cannonBall.mtl')
-		this.bulletMtl.preload()
-
-		// create the 4 targets
-		const t1 = await this.createTarget(targetMtl)
-		t1.position.x = -1
-		t1.position.z = -3
-
-		const t2 = await this.createTarget(targetMtl)
-		t2.position.x = 1
-		t2.position.z = -3
-
-		const t3 = await this.createTarget(targetMtl)
-		t3.position.x = 2
-		t3.position.z = -3
-
-		const t4 = await this.createTarget(targetMtl)
-		t4.position.x = -2
-		t4.position.z = -3
-
-		this.add(t1, t2, t3, t4)
-		this.targets.push(t1, t2, t3, t4)
-
-		this.blaster = await this.createBlaster()
-		this.add(this.blaster)
-		this.blaster.scale.set(10, 10, 0.3);
-
-
-		this.blaster.position.z = 3
-		this.blaster.add(this.camera)
-
-		this.camera.position.z = 2
-		this.camera.position.y = 3
-		this.camera.rotateOnAxis(new THREE.Vector3(1, 0, 0), -0.8)
+		const gridHelper = new THREE.GridHelper(20, 20, 'teal', 'darkgray')
+		gridHelper.position.y = -0.01
+		this.add(gridHelper)
 
 		const light = new THREE.DirectionalLight(0xFFFFFF, 1)
 		light.position.set(0, 4, 2)
 
 		this.add(light)
+
+
+		this.player = new Player()
+		this.add(this.player)
+		await this.player.Init()
+
+		this.enemyFactory = new EnemeyFactory()
+		this.add(this.enemyFactory)
+		await this.enemyFactory.Init()
+
+
+		this.camera.position.y = 7
+		this.camera.position.z = -2
+
+		this.camera.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI )
+		this.camera.rotateOnAxis(new THREE.Vector3(1, 0, 0), -1.1)
+
+		this.player.add(this.camera)
+
 
 		document.addEventListener('keydown', this.handleKeyDown)
 		document.addEventListener('keyup', this.handleKeyUp)
@@ -86,13 +75,13 @@ export default class MainScene extends THREE.Scene
 
 		if (event.key === ' ')
 		{
-			this.createBullet()
+			//this.createBullet()
 		}
 	}
 
 	private updateInput()
 	{
-		if (!this.blaster)
+		if (!this.player)
 		{
 			return
 		}
@@ -103,27 +92,27 @@ export default class MainScene extends THREE.Scene
 		{
 			if (this.keyDown.has('a') || this.keyDown.has('arrowleft'))
 			{
-				this.blaster.rotateY(0.02)
+				this.player.rotateY(0.02)
 			}
 			else if (this.keyDown.has('d') || this.keyDown.has('arrowright'))
 			{
-				this.blaster.rotateY(-0.02)
+				this.player.rotateY(-0.02)
 			}
 		}
 
 		const dir = this.directionVector
 
-		this.camera.getWorldDirection(dir)
+		this.player.getWorldDirection(dir)
 
 		const speed = 0.1
 
 		if (this.keyDown.has('w') || this.keyDown.has('arrowup'))
 		{
-			this.blaster.position.add(dir.clone().multiplyScalar(speed))
+			this.player.position.add(dir.clone().multiplyScalar(speed))
 		}
 		else if (this.keyDown.has('s') || this.keyDown.has('arrowdown'))
 		{
-			this.blaster.position.add(dir.clone().multiplyScalar(-speed))
+			this.player.position.add(dir.clone().multiplyScalar(-speed))
 		}
 
 		if (shiftKey)
@@ -133,14 +122,14 @@ export default class MainScene extends THREE.Scene
 
 			if (this.keyDown.has('a') || this.keyDown.has('arrowleft'))
 			{
-				this.blaster.position.add(
+				this.player.position.add(
 					strafeDir.applyAxisAngle(upVector, Math.PI * 0.5)
 						.multiplyScalar(speed)
 				)
 			}
 			else if (this.keyDown.has('d') || this.keyDown.has('arrowright'))
 			{
-				this.blaster.position.add(
+				this.player.position.add(
 					strafeDir.applyAxisAngle(upVector, Math.PI * -0.5)
 						.multiplyScalar(speed)
 				)
@@ -148,113 +137,9 @@ export default class MainScene extends THREE.Scene
 		}
 	}
 
-	private async createTarget(mtl: MTLLoader.MaterialCreator)
-	{
-		this.objLoader.setMaterials(mtl)
-		
-		const modelRoot = await this.objLoader.loadAsync('assets/ship_dark.obj')
-
-		modelRoot.rotateY(Math.PI * 0.5)
-		modelRoot.scale.setScalar(0.0)
-
-		return modelRoot
-	}
-
-	private async createBlaster()
-	{
-		const mtl = await this.mtlLoader.loadAsync('assets/ship_light.mtl')
-		mtl.preload()
-
-		this.objLoader.setMaterials(mtl)
-
-		const modelRoot = await this.objLoader.loadAsync('assets/ship_light.obj')
-		
-		return modelRoot
-	}
-
-	private async createBullet()
-	{
-		if (!this.blaster)
-		{
-			return
-		}
-
-		if (this.bulletMtl)
-		{
-			this.objLoader.setMaterials(this.bulletMtl)
-		}
-
-		const bulletModel = await this.objLoader.loadAsync('assets/cannonBall.obj')
-
-		this.camera.getWorldDirection(this.directionVector)
-
-		const aabb = new THREE.Box3().setFromObject(this.blaster)
-		const size = aabb.getSize(new THREE.Vector3())
-
-		const vec = this.blaster.position.clone()
-		vec.y += 0.06
-
-		bulletModel.position.add(
-			vec.add(
-				this.directionVector.clone().multiplyScalar(size.z * 0.5)
-			)
-		)
-
-		// rotate children to match gun for simplicity
-		bulletModel.children.forEach(child => child.rotateX(Math.PI * -0.5))
-
-		// use the same rotation as as the gun
-		bulletModel.rotation.copy(this.blaster.rotation)
-
-		this.add(bulletModel)
-
-		const b = new Bullet(bulletModel)
-		b.setVelocity(
-			this.directionVector.x * 0.2,
-			this.directionVector.y * 0.2,
-			this.directionVector.z * 0.2
-		)
-
-		this.bullets.push(b)
-	}
-
-	private updateBullets()
-	{
-		for (let i = 0; i < this.bullets.length; ++i)
-		{
-			const b = this.bullets[i]
-			b.update()
-
-			if (b.shouldRemove)
-			{
-				this.remove(b.group)
-				this.bullets.splice(i, 1)
-				i--
-			}
-			else
-			{
-				for (let j = 0; j < this.targets.length; ++j)
-				{
-					const target = this.targets[j]
-					if (target.position.distanceToSquared(b.group.position) < 0.05)
-					{
-						this.remove(b.group)
-						this.bullets.splice(i, 1)
-						i--
-
-						target.visible = false
-						setTimeout(() => {
-							target.visible = true
-						}, 1000)
-					}
-				}
-			}
-		}
-	}
-
 	update()
 	{
 		this.updateInput()
-		this.updateBullets()
+		//this.updateBullets()
 	}
 }
