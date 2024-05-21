@@ -5,6 +5,7 @@ import InputKeys from './InputKeys.ts'
 import Player from './Player.ts'
 import BulletFactory from './BulletFactory.ts'
 import EnemeyFactory from './EnemeyFactory.ts'
+import Starfield from './Starfield.ts'
 
 export default class MainScene extends THREE.Scene
 {
@@ -18,6 +19,8 @@ export default class MainScene extends THREE.Scene
 	private player: Player = new Player()
 	private enemyFactory: EnemeyFactory = new EnemeyFactory()
 	private bulletFactory: BulletFactory = new BulletFactory()
+
+	private starfield: Starfield = new Starfield(this)
 
 	private directionVector = new THREE.Vector3()
 	
@@ -147,5 +150,7 @@ export default class MainScene extends THREE.Scene
 		this.updateInput()
 		if( this.bulletFactory)
 			this.bulletFactory.Update()
+
+		this.starfield.Update(this.player, 1)
 	}
 }
