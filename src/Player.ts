@@ -3,18 +3,26 @@ import {
 	Vector3
 } from 'three'
 
+import InputKeys from './InputKeys.ts'
+
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader'
 
-export default class Player extends Object3D
-{
-	private readonly velocity = new Vector3()
+export default class Player extends Object3D {
+	private inputKeys: InputKeys
+
+	public Velocity = new Vector3()
+	public Direction = new Vector3()
 
 	private readonly objLoader = new OBJLoader()
 	private readonly mtlLoader = new MTLLoader()
 
-	public async Init()
-	{
+	constructor(inputKeys: InputKeys) {
+		super()
+		this.inputKeys = inputKeys
+	}
+
+	public async Init() {
 		const mtl = await this.mtlLoader.loadAsync('assets/ship.mtl')
 		mtl.preload()
 
@@ -22,12 +30,54 @@ export default class Player extends Object3D
 
 		const modelRoot = await this.objLoader.loadAsync('assets/ship.obj')
 		this.add(modelRoot)
-		
+
 		return modelRoot
 	}
 
-    update()
-	{
-        //this.group.position.x += this.velocity.x
-    }
+	Update() {
+		this.updateInput()
+	}
+
+	private updateInput() {
+		const shiftKey = this.inputKeys.KeyIsDown.has('shift')
+
+		if (!shiftKey) {
+			if (this.inputKeys.KeyIsDown.has('a') || this.inputKeys.KeyIsDown.has('arrowleft')) {
+				this.rotation.y += 0.02
+			}
+			else if (this.inputKeys.KeyIsDown.has('d') || this.inputKeys.KeyIsDown.has('arrowright')) {
+				this.rotation.y -= 0.02
+			}
+		}
+
+		const dir = this.Direction
+		this.getWorldDirection(dir)
+
+		const speed = 0.1
+
+		if (this.inputKeys.KeyIsDown.has('w') || this.inputKeys.KeyIsDown.has('arrowup')) {
+			this.position.add(dir.clone().multiplyScalar(speed))
+		}
+		else if (this.inputKeys.KeyIsDown.has('s') || this.inputKeys.KeyIsDown.has('arrowdown')) {
+			this.position.add(dir.clone().multiplyScalar(-speed))
+		}
+
+		if (shiftKey) {
+			const strafeDir = dir.clone()
+			const upVector = new Vector3(0, 1, 0)
+
+			if (this.inputKeys.KeyIsDown.has('a') || this.inputKeys.KeyIsDown.has('arrowleft')) {
+				this.position.add(
+					strafeDir.applyAxisAngle(upVector, Math.PI * 0.5)
+						.multiplyScalar(speed)
+				)
+			}
+			else if (this.inputKeys.KeyIsDown.has('d') || this.inputKeys.KeyIsDown.has('arrowright')) {
+				this.position.add(
+					strafeDir.applyAxisAngle(upVector, Math.PI * -0.5)
+						.multiplyScalar(speed)
+				)
+			}
+		}
+	}
 }

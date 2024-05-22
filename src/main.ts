@@ -15,8 +15,7 @@ const mainCamera = new THREE.PerspectiveCamera(75, width / height, 0.1, 100)
 const scene = new MainScene(mainCamera)
 scene.initialize()
 
-function tick()
-{
+function tick() {
 	scene.update()
 	renderer.render(scene, mainCamera)
 	requestAnimationFrame(tick)

@@ -7,21 +7,19 @@ import {
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader'
 
-export default class EnemeyFactory extends Object3D
-{
+export default class EnemeyFactory extends Object3D {
 	private targets: Group[] = []
 
 	private readonly objLoader = new OBJLoader()
 	private readonly mtlLoader = new MTLLoader()
 
-	public readonly group: Group | undefined 
+	public readonly group: Group | undefined
 	private readonly velocity = new Vector3()
 
 	private isDead = false
 
 
-	public async Init()
-	{
+	public async Init() {
 		const enemyMaterial = await this.mtlLoader.loadAsync('assets/enemy.mtl')
 		enemyMaterial.preload()
 
@@ -45,11 +43,10 @@ export default class EnemeyFactory extends Object3D
 		this.targets.push(t1, t2, t3, t4)
 	}
 
-	
-	private async createEnemy(mtl: MTLLoader.MaterialCreator)
-	{
+
+	private async createEnemy(mtl: MTLLoader.MaterialCreator) {
 		this.objLoader.setMaterials(mtl)
-		
+
 		const modelRoot = await this.objLoader.loadAsync('assets/enemy.obj')
 
 		modelRoot.rotateY(Math.PI * 0.5)
@@ -58,8 +55,7 @@ export default class EnemeyFactory extends Object3D
 		return modelRoot
 	}
 
-    update()
-	{
-        //this.group.position.x += this.velocity.x
-    }
+	update() {
+		//this.group.position.x += this.velocity.x
+	}
 }
