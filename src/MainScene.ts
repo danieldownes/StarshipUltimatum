@@ -1,4 +1,4 @@
-import * as THREE from 'three'
+import * as THREE from 'three';
 
 import InputKeys from './InputKeys.ts'
 
@@ -60,21 +60,70 @@ export default class MainScene extends THREE.Scene {
 			if (s === ' ')
 				this.spawnBullet()
 		});
-		this.inputKeys.OnKeyUp.subscribe((s: string) => {
-			//console.log("L: " + s)
-		});
 	}
 
 	spawnBullet() {
-		console.log("Spawn")
-		this.bulletFactory.Spawn(this.player, this.player.Direction.addScaledVector(this.player.vel))
+		const v: number = this.player.Velocity.length() + 0.2;
+		console.log("Spawn " + v)
+
+		this.bulletFactory.Spawn(this.player, this.player.Direction, v);
 	}
 
 	update() {
 		this.player.Update()
+
 		if (this.bulletFactory)
 			this.bulletFactory.Update()
 
-		this.starfield.Update(this.player, 1)
+		// Enemey collisions
+		for (let i = 0; i < this.enemyFactory.EnemeyGroup.length; ++i) {
+			const e = this.enemyFactory.EnemeyGroup[i]
+
+			// Hit Player?
+			if (MainScene.SpheresOverlap(this.player.position, 0.4, e.position, 0.4)) {
+				this.enemyFactory.remove(e)
+				this.enemyFactory.EnemeyGroup.splice(i, 1)
+				i--
+				continue
+			}
+
+			// Hit bullet?
+			for (let j = 0; j < this.bulletFactory.bullets.length; ++j) {
+				const b = this.bulletFactory.bullets[j]
+
+				if (MainScene.SpheresOverlap(b.group.position, 0.4, e.position, 0.4)) {
+					console.log("j: " + j);
+
+					this.bulletFactory.Remove(b)
+					this.enemyFactory.remove(e)
+					this.enemyFactory.EnemeyGroup.splice(i, 1)
+					j--
+					i--
+					continue
+				}
+			}
+
+			this.starfield.Update(this.player, 1)
+		}
+
+	}
+
+	public static SpheresOverlap(p1: THREE.Vector3, r1: number, p2: THREE.Vector3, r2: number): Boolean {
+		return p1.distanceTo(p2) - r1 - r2 <= 0
+	}
+
+
+	CheckSphereHit(position: THREE.Vector3, radius: number): Boolean {
+		for (let i = 0; i < this.bulletFactory.bullets.length; ++i) {
+			const b = this.bulletFactory.bullets[i]
+
+			if (position.distanceTo(this.player.position) > radius)
+				return true
+
+			this.remove(b.group)
+			//this.bullets.splice(i, 1)
+			i--
+		}
+		return false
 	}
 }

@@ -50,8 +50,4 @@ export default class Starfield {
         }
     }
 
-    private randHexColor(): string {
-
-        return n.slice(0, 6)
-    }
 }

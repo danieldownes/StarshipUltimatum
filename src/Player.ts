@@ -39,15 +39,13 @@ export default class Player extends Object3D {
 	}
 
 	private updateInput() {
-		const shiftKey = this.inputKeys.KeyIsDown.has('shift')
+		//const shiftKey = this.inputKeys.KeyIsDown.has('shift')
 
-		if (!shiftKey) {
-			if (this.inputKeys.KeyIsDown.has('a') || this.inputKeys.KeyIsDown.has('arrowleft')) {
-				this.rotation.y += 0.02
-			}
-			else if (this.inputKeys.KeyIsDown.has('d') || this.inputKeys.KeyIsDown.has('arrowright')) {
-				this.rotation.y -= 0.02
-			}
+		if (this.inputKeys.KeyIsDown.has('a') || this.inputKeys.KeyIsDown.has('arrowleft')) {
+			this.rotation.y += 0.02
+		}
+		else if (this.inputKeys.KeyIsDown.has('d') || this.inputKeys.KeyIsDown.has('arrowright')) {
+			this.rotation.y -= 0.02
 		}
 
 		const dir = this.Direction
@@ -55,13 +53,19 @@ export default class Player extends Object3D {
 
 		const speed = 0.1
 
+		this.Velocity.multiplyScalar(0);
+
 		if (this.inputKeys.KeyIsDown.has('w') || this.inputKeys.KeyIsDown.has('arrowup')) {
-			this.position.add(dir.clone().multiplyScalar(speed))
+			this.Velocity.add(dir.clone().multiplyScalar(speed))
 		}
 		else if (this.inputKeys.KeyIsDown.has('s') || this.inputKeys.KeyIsDown.has('arrowdown')) {
-			this.position.add(dir.clone().multiplyScalar(-speed))
+			this.Velocity.add(dir.clone().multiplyScalar(-speed))
 		}
 
+		this.position.add(this.Velocity)
+
+		// Strif
+		/*
 		if (shiftKey) {
 			const strafeDir = dir.clone()
 			const upVector = new Vector3(0, 1, 0)
@@ -79,5 +83,8 @@ export default class Player extends Object3D {
 				)
 			}
 		}
+		*/
 	}
+
 }
+

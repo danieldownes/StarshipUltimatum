@@ -8,16 +8,15 @@ import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader'
 
 export default class EnemeyFactory extends Object3D {
-	private targets: Group[] = []
+	public EnemeyGroup: Group[] = []
+	public readonly group: Group | undefined
 
 	private readonly objLoader = new OBJLoader()
 	private readonly mtlLoader = new MTLLoader()
 
-	public readonly group: Group | undefined
 	private readonly velocity = new Vector3()
 
 	private isDead = false
-
 
 	public async Init() {
 		const enemyMaterial = await this.mtlLoader.loadAsync('assets/enemy.mtl')
@@ -40,9 +39,8 @@ export default class EnemeyFactory extends Object3D {
 		t4.position.z = -3
 
 		this.add(t1, t2, t3, t4)
-		this.targets.push(t1, t2, t3, t4)
+		this.EnemeyGroup.push(t1, t2, t3, t4)
 	}
-
 
 	private async createEnemy(mtl: MTLLoader.MaterialCreator) {
 		this.objLoader.setMaterials(mtl)

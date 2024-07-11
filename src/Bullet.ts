@@ -2,23 +2,21 @@ import {
 	Group,
 	Vector3
 } from 'three'
+import BulletFactory from './BulletFactory'
 
 export default class Bullet {
+	private readonly factory: BulletFactory
 	public readonly group: Group
 	private readonly velocity = new Vector3()
+	private timeoutId: number | null = null;
 
-	private isDead = false
-
-	constructor(group: Group) {
+	constructor(factory: BulletFactory, group: Group) {
+		this.factory = factory
 		this.group = group
 
-		setTimeout(() => {
-			this.isDead = true
+		this.timeoutId = setTimeout(() => {
+			this.timeout();
 		}, 1000)
-	}
-
-	get shouldRemove() {
-		return this.isDead
 	}
 
 	setVelocity(x: number, y: number, z: number) {
@@ -29,6 +27,18 @@ export default class Bullet {
 		this.group.position.x += this.velocity.x
 		this.group.position.y += this.velocity.y
 		this.group.position.z += this.velocity.z
+	}
+
+	public CancelTimeout() {
+		if (this.timeoutId) {
+			clearTimeout(this.timeoutId);
+			this.timeoutId = null;
+		}
+	}
+
+	private timeout() {
+		this.timeoutId = null
+		this.factory.Remove(this)
 	}
 
 }
