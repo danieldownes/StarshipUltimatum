@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import MainScene from './MainScene'
+import { UiController } from './Ui/UiController.ts'
 
 const width = window.innerWidth
 const height = window.innerHeight
@@ -15,10 +16,30 @@ const mainCamera = new THREE.PerspectiveCamera(75, width / height, 0.1, 100)
 const scene = new MainScene(mainCamera)
 scene.initialize()
 
+const ui = new UiController(width, height)
+
 function tick() {
 	scene.update()
+	renderer.clear();
 	renderer.render(scene, mainCamera)
+	ui.render(renderer)
 	requestAnimationFrame(tick)
 }
 
 tick()
+
+
+// Handle window resizing
+window.addEventListener('resize', onWindowResize, false)
+
+function onWindowResize() {
+	const newWidth = window.innerWidth
+	const newHeight = window.innerHeight
+
+	mainCamera.aspect = newWidth / newHeight
+	mainCamera.updateProjectionMatrix()
+
+	renderer.setSize(newWidth, newHeight)
+
+	ui.resize(newWidth, newHeight)  // Resize UI
+}
