@@ -71,6 +71,7 @@ export default class MainScene extends THREE.Scene {
 
 	update() {
 		this.player.Update()
+		this.starfield.Update(this.player, this.player.Speed * 30.2)
 
 		if (this.bulletFactory)
 			this.bulletFactory.Update()
@@ -102,8 +103,6 @@ export default class MainScene extends THREE.Scene {
 					continue
 				}
 			}
-
-			this.starfield.Update(this.player, 1)
 		}
 
 	}

@@ -11,7 +11,7 @@ export default class Starfield {
     }
 
     private createStars(scene: THREE.Scene): void {
-        const geometry = new THREE.SphereGeometry(0.05, 4, 4); // Sphere geometry with radius 0.1 and subdivision level 8
+        const geometry = new THREE.SphereGeometry(0.02, 4, 4);
 
         for (let i = 0; i < this.starsTotal; i++) {
             const color = new THREE.Color(0xffffff);

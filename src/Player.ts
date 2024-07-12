@@ -11,6 +11,9 @@ import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader'
 export default class Player extends Object3D {
 	private inputKeys: InputKeys
 
+	public get Speed() {
+		return this.Velocity.length();
+	}
 	public Velocity = new Vector3()
 	public Direction = new Vector3()
 
