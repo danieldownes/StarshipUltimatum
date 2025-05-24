@@ -28,4 +28,19 @@ export default class InputKeys {
   public get OnKeyDown() {
     return this.keyDownDispatcher.asEvent();
   }
+  public UpIsPressed(): boolean {
+    return this.KeyIsDown.has('w') || this.KeyIsDown.has('arrowup');
+  }
+
+  public DownIsPressed(): boolean {
+    return this.KeyIsDown.has('s') || this.KeyIsDown.has('arrowdown');
+  }
+
+  public LeftIsPressed(): boolean {
+    return this.KeyIsDown.has('a') || this.KeyIsDown.has('arrowleft');
+  }
+
+  public RightIsPressed(): boolean {
+    return this.KeyIsDown.has('d') || this.KeyIsDown.has('arrowright');
+  }
 }

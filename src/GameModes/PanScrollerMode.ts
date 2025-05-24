@@ -67,16 +67,16 @@ export class PanScrollerMode implements IGameMode {
         const playerMoveSpeed = 8.0 * deltaTime; // Units per second
         
         // Horizontal movement (left/right on screen = X axis in world)
-        if (inputKeys.KeyIsDown.has('arrowright')) {
+        if (inputKeys.RightIsPressed()) {
             player.position.x -= playerMoveSpeed;
-        } else if (inputKeys.KeyIsDown.has('arrowleft')) {
+        } else if (inputKeys.LeftIsPressed()) {
             player.position.x += playerMoveSpeed;
         }
         
         // Vertical movement (up/down on screen = Z axis in world, but inverted)
-        if (inputKeys.KeyIsDown.has('arrowup')) {
+        if (inputKeys.UpIsPressed()) {
             player.position.z += playerMoveSpeed; // Move toward -Z (up on screen)
-        } else if (inputKeys.KeyIsDown.has('arrowdown')) {
+        } else if (inputKeys.DownIsPressed()) {
             player.position.z -= playerMoveSpeed; // Move toward +Z (down on screen)
         }
 

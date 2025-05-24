@@ -31,17 +31,17 @@ export class SideScrollerMode implements IGameMode {
 
         // Player vertical movement (Up/Down arrow keys)
         const playerVerticalSpeed = 5.0 * deltaTime; // Units per second
-        if (inputKeys.KeyIsDown.has('arrowup')) {
+        if (inputKeys.UpIsPressed()) {
             player.applyMovement(new THREE.Vector3(0, playerVerticalSpeed, 0));
-        } else if (inputKeys.KeyIsDown.has('arrowdown')) {
+        } else if (inputKeys.DownIsPressed()) {
             player.applyMovement(new THREE.Vector3(0, -playerVerticalSpeed, 0));
         }
 
         // Player forward/backward movement relative to camera speed (Left/Right arrow keys)
         const playerHorizontalSpeed = 5.0 * deltaTime; // Units per second
-        if (inputKeys.KeyIsDown.has('arrowright')) {
+        if (inputKeys.RightIsPressed()) {
             player.applyMovement(new THREE.Vector3(playerHorizontalSpeed, 0, 0));
-        } else if (inputKeys.KeyIsDown.has('arrowleft')) {
+        } else if (inputKeys.LeftIsPressed()) {
             player.applyMovement(new THREE.Vector3(-playerHorizontalSpeed, 0, 0));
         } else {
             // If no left/right input, player resumes camera speed

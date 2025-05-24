@@ -37,9 +37,9 @@ export class OverheadMode implements IGameMode {
         const rotationSpeed = 2.0 * deltaTime; // Radians per second
         const moveSpeed = 5.0 * deltaTime; // Units per second
 
-        if (inputKeys.KeyIsDown.has('a') || inputKeys.KeyIsDown.has('arrowleft')) {
+        if (inputKeys.LeftIsPressed()) {
             player.applyRotationY(rotationSpeed);
-        } else if (inputKeys.KeyIsDown.has('d') || inputKeys.KeyIsDown.has('arrowright')) {
+        } else if (inputKeys.RightIsPressed()) {
             player.applyRotationY(-rotationSpeed);
         }
 
@@ -48,9 +48,9 @@ export class OverheadMode implements IGameMode {
 
         player.Velocity.multiplyScalar(0); // Reset velocity each frame
 
-        if (inputKeys.KeyIsDown.has('w') || inputKeys.KeyIsDown.has('arrowup')) {
+        if (inputKeys.UpIsPressed()) {
             player.Velocity.add(dir.clone().multiplyScalar(moveSpeed));
-        } else if (inputKeys.KeyIsDown.has('s') || inputKeys.KeyIsDown.has('arrowdown')) {
+        } else if (inputKeys.DownIsPressed()) {
             player.Velocity.add(dir.clone().multiplyScalar(-moveSpeed));
         }
 
