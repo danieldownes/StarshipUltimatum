@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import {
 	Object3D,
 	Vector3
@@ -41,7 +42,7 @@ export default class Player extends Object3D {
 	}
 
 	Update() {
-		this.updateInput()
+		// Player update logic is now handled by the active GameMode
 	}
 
 	public IncreaseScore(amount: number) {
@@ -49,52 +50,20 @@ export default class Player extends Object3D {
 		this.OnScoreChanged.emit(this.score);
 	}
 
-	private updateInput() {
-		//const shiftKey = this.inputKeys.KeyIsDown.has('shift')
+	public applyMovement(velocity: THREE.Vector3) {
+		this.position.add(velocity);
+	}
 
-		if (this.inputKeys.KeyIsDown.has('a') || this.inputKeys.KeyIsDown.has('arrowleft')) {
-			this.rotation.y += 0.02
-		}
-		else if (this.inputKeys.KeyIsDown.has('d') || this.inputKeys.KeyIsDown.has('arrowright')) {
-			this.rotation.y -= 0.02
-		}
+	public applyRotationY(angle: number) {
+		this.rotation.y += angle;
+	}
 
-		const dir = this.Direction
-		this.getWorldDirection(dir)
+	public setRotation(x: number, y: number, z: number) {
+		this.rotation.set(x, y, z);
+	}
 
-		const speed = 0.1
-
-		this.Velocity.multiplyScalar(0);
-
-		if (this.inputKeys.KeyIsDown.has('w') || this.inputKeys.KeyIsDown.has('arrowup')) {
-			this.Velocity.add(dir.clone().multiplyScalar(speed))
-		}
-		else if (this.inputKeys.KeyIsDown.has('s') || this.inputKeys.KeyIsDown.has('arrowdown')) {
-			this.Velocity.add(dir.clone().multiplyScalar(-speed))
-		}
-
-		this.position.add(this.Velocity)
-
-		// Strif
-		/*
-		if (shiftKey) {
-			const strafeDir = dir.clone()
-			const upVector = new Vector3(0, 1, 0)
-
-			if (this.inputKeys.KeyIsDown.has('a') || this.inputKeys.KeyIsDown.has('arrowleft')) {
-				this.position.add(
-					strafeDir.applyAxisAngle(upVector, Math.PI * 0.5)
-						.multiplyScalar(speed)
-				)
-			}
-			else if (this.inputKeys.KeyIsDown.has('d') || this.inputKeys.KeyIsDown.has('arrowright')) {
-				this.position.add(
-					strafeDir.applyAxisAngle(upVector, Math.PI * -0.5)
-						.multiplyScalar(speed)
-				)
-			}
-		}
-		*/
+	public getWorldDirection(target: THREE.Vector3): THREE.Vector3 {
+		return super.getWorldDirection(target);
 	}
 
 }

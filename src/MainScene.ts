@@ -7,9 +7,14 @@ import BulletFactory from './BulletFactory.ts'
 import EnemeyFactory from './EnemeyFactory.ts'
 import Starfield from './Starfield.ts'
 
+import { IGameMode } from './GameModes/IGameMode.ts';
+import { OverheadMode } from './GameModes/OverheadMode.ts';
+import { SideScrollerMode } from './GameModes/SideScrollerMode.ts';
+import { PanScrollerMode } from './GameModes/PanScrollerMode.ts';
+
 export default class MainScene extends THREE.Scene {
 	private readonly root: THREE.Object3D
-	private readonly camera: THREE.PerspectiveCamera
+	private readonly camera: THREE.Object3D
 
 	private readonly inputKeys: InputKeys
 
@@ -19,17 +24,29 @@ export default class MainScene extends THREE.Scene {
 
 	private starfield: Starfield = new Starfield(this)
 
+	private currentMode: IGameMode;
+	private availableModes: Map<string, IGameMode>;
+
 	constructor(camera: THREE.PerspectiveCamera) {
 		super()
 		this.root = new THREE.Object3D
 		this.add(this.root)
 
-		this.camera = camera
+		this.camera = new THREE.Object3D
+		this.camera.add(camera)
 
 		this.inputKeys = new InputKeys()
 		this.player = new Player(this.inputKeys)
 		this.bulletFactory = new BulletFactory()
 		this.enemyFactory = new EnemeyFactory()
+
+		this.availableModes = new Map<string, IGameMode>();
+        this.availableModes.set('overhead', new OverheadMode());
+        this.availableModes.set('sideScroller', new SideScrollerMode());
+        this.availableModes.set('panScroller', new PanScrollerMode());
+
+        // Set initial mode
+        this.currentMode = this.availableModes.get('overhead')!;
 	}
 
 	async initialize() {
@@ -41,7 +58,6 @@ export default class MainScene extends THREE.Scene {
 		light.position.set(0, 4, 2)
 		this.add(light)
 
-		this.add(this.player)
 		await this.player.Init()
 
 		this.add(this.enemyFactory)
@@ -50,11 +66,10 @@ export default class MainScene extends THREE.Scene {
 		this.add(this.bulletFactory)
 		await this.bulletFactory.Init()
 
-		this.camera.position.y = 7
-		this.camera.position.z = -2
-		this.camera.rotateOnAxis(new THREE.Vector3(0, 1, 0), Math.PI)
-		this.camera.rotateOnAxis(new THREE.Vector3(1, 0, 0), -1.1)
-		this.player.add(this.camera)
+		this.add(this.camera)
+
+		// Initialize camera and player for the current mode
+		this.currentMode.enter(this, this.player, this.camera);
 
 		this.inputKeys.OnKeyDown.subscribe((s: string) => {
 			if (s === ' ')
@@ -69,12 +84,14 @@ export default class MainScene extends THREE.Scene {
 		this.bulletFactory.Spawn(this.player, this.player.Direction, v, "player");
 	}
 
-	update() {
-		this.player.Update()
-		this.starfield.Update(this.player, this.player.Speed * 30.2)
+	update(deltaTime: number) {
+		// Delegate update to the current game mode
+		this.currentMode.update(this.player, this.camera, this.inputKeys, deltaTime);
+
+		this.starfield.Update(this.player, this.player.Speed * 30.2 * deltaTime * 60) // Adjust starfield speed with deltaTime
 
 		if (this.bulletFactory)
-			this.bulletFactory.Update()
+			this.bulletFactory.Update(deltaTime)
 
 		// Enemey collisions
 		for (let i = 0; i < this.enemyFactory.EnemeyGroup.length; ++i) {
@@ -110,6 +127,18 @@ export default class MainScene extends THREE.Scene {
 		}
 
 	}
+
+	public switchMode(modeName: string) {
+        const newMode = this.availableModes.get(modeName);
+        if (newMode && newMode !== this.currentMode) {
+            this.currentMode.exit(this.player, this.camera);
+            this.currentMode = newMode;
+            this.currentMode.enter(this, this.player, this.camera);
+            console.log(`Switched to mode: ${modeName}`);
+        } else {
+            console.warn(`Mode '${modeName}' not found or already active.`);
+        }
+    }
 
 	public static SpheresOverlap(p1: THREE.Vector3, r1: number, p2: THREE.Vector3, r2: number): Boolean {
 		return p1.distanceTo(p2) - r1 - r2 <= 0

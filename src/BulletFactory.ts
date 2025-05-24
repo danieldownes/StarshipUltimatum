@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import {
 	Object3D,
 	Group,
@@ -36,18 +37,20 @@ export default class BulletFactory extends Group {
 		const aabb = new Box3().setFromObject(origin)
 		const size = aabb.getSize(new Vector3())
 
-		const vec = origin.position.clone()
-		vec.y += 0.06
+		const originWorldPosition = new Vector3();
+		origin.getWorldPosition(originWorldPosition);
 
-		bulletModel.position.add(
-			vec.add(
-				direction.clone().multiplyScalar(size.z * 0.5)
-			)
-		)
+		const originWorldQuaternion = new THREE.Quaternion();
+		origin.getWorldQuaternion(originWorldQuaternion);
+
+		const bulletSpawnOffset = direction.clone().multiplyScalar(size.z * 0.5);
+		bulletSpawnOffset.y += 0.06; // Adjust for vertical offset
+
+		bulletModel.position.copy(originWorldPosition).add(bulletSpawnOffset);
 
 		// Rotate children to match direction
-		bulletModel.children.forEach(child => child.rotateX(Math.PI * -0.5))
-		bulletModel.rotation.copy(origin.rotation)
+		bulletModel.children.forEach(child => child.rotateX(Math.PI * -0.5));
+		bulletModel.quaternion.copy(originWorldQuaternion);
 
 		this.add(bulletModel)
 
@@ -62,10 +65,10 @@ export default class BulletFactory extends Group {
 		this.bullets.push(b)
 	}
 
-	public Update() {
+	public Update(deltaTime: number) {
 		for (let i = 0; i < this.bullets.length; ++i) {
 			const b = this.bullets[i]
-			b.update()
+			b.update(deltaTime)
 		}
 	}
 

@@ -25,10 +25,10 @@ export default class Bullet {
 		this.velocity.set(x, y, z)
 	}
 
-	update() {
-		this.group.position.x += this.velocity.x
-		this.group.position.y += this.velocity.y
-		this.group.position.z += this.velocity.z
+	update(deltaTime: number) {
+		this.group.position.x += this.velocity.x * deltaTime * 60;
+		this.group.position.y += this.velocity.y * deltaTime * 60;
+		this.group.position.z += this.velocity.z * deltaTime * 60;
 	}
 
 	public CancelTimeout() {
