@@ -9,10 +9,12 @@ export default class Bullet {
 	public readonly group: Group
 	private readonly velocity = new Vector3()
 	private timeoutId: number | null = null;
+	public shooterTag: string;
 
-	constructor(factory: BulletFactory, group: Group) {
+	constructor(factory: BulletFactory, group: Group, shooterTag: string) {
 		this.factory = factory
 		this.group = group
+		this.shooterTag = shooterTag
 
 		this.timeoutId = setTimeout(() => {
 			this.timeout();

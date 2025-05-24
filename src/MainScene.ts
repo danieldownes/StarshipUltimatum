@@ -13,7 +13,7 @@ export default class MainScene extends THREE.Scene {
 
 	private readonly inputKeys: InputKeys
 
-	private readonly player: Player
+	public readonly player: Player
 	private readonly enemyFactory: EnemeyFactory
 	private readonly bulletFactory: BulletFactory
 
@@ -66,7 +66,7 @@ export default class MainScene extends THREE.Scene {
 		const v: number = this.player.Velocity.length() + 0.2;
 		console.log("Spawn " + v)
 
-		this.bulletFactory.Spawn(this.player, this.player.Direction, v);
+		this.bulletFactory.Spawn(this.player, this.player.Direction, v, "player");
 	}
 
 	update() {
@@ -94,6 +94,10 @@ export default class MainScene extends THREE.Scene {
 
 				if (MainScene.SpheresOverlap(b.group.position, 0.4, e.position, 0.4)) {
 					console.log("j: " + j);
+
+					if (b.shooterTag === "player") {
+						this.player.IncreaseScore(10); // Increase score by 10 for hitting an enemy
+					}
 
 					this.bulletFactory.Remove(b)
 					this.enemyFactory.remove(e)

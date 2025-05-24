@@ -4,12 +4,15 @@ import {
 } from 'three'
 
 import InputKeys from './InputKeys.ts'
+import { EventEmitter } from './EventEmitter.ts'
 
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader'
 import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader'
 
 export default class Player extends Object3D {
 	private inputKeys: InputKeys
+	private score: number = 0;
+	public readonly OnScoreChanged = new EventEmitter<number>();
 
 	public get Speed() {
 		return this.Velocity.length();
@@ -39,6 +42,11 @@ export default class Player extends Object3D {
 
 	Update() {
 		this.updateInput()
+	}
+
+	public IncreaseScore(amount: number) {
+		this.score += amount;
+		this.OnScoreChanged.emit(this.score);
 	}
 
 	private updateInput() {

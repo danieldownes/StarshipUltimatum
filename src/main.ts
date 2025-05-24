@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import MainScene from './MainScene'
 import { UiController } from './Ui/UiController.ts'
+import PlayerUiInteractor from './Ui/PlayerUiInteractor.ts'
 
 const width = window.innerWidth
 const height = window.innerHeight
@@ -17,6 +18,7 @@ const scene = new MainScene(mainCamera)
 scene.initialize()
 
 const ui = new UiController(width, height)
+const playerUiInteractor = new PlayerUiInteractor(scene.player, ui);
 
 function tick() {
 	scene.update()

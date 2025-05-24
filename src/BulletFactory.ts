@@ -23,7 +23,7 @@ export default class BulletFactory extends Group {
 		//this.material.preload()
 	}
 
-	async Spawn(origin: Object3D, direction: Vector3, velocity: number) {
+	async Spawn(origin: Object3D, direction: Vector3, velocity: number, shooterTag: string) {
 		if (this.material) {
 			this.objLoader.setMaterials(this.material)
 		}
@@ -51,7 +51,7 @@ export default class BulletFactory extends Group {
 
 		this.add(bulletModel)
 
-		const b = new Bullet(this, bulletModel)
+		const b = new Bullet(this, bulletModel, shooterTag)
 		direction.multiplyScalar(velocity)
 		b.setVelocity(
 			direction.x,

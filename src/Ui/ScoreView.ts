@@ -11,7 +11,7 @@ export class ScoreView {
     private createSprite(): THREE.Sprite {
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
-        canvas.width = 256;
+        canvas.width = 320;
         canvas.height = 128;
 
         const texture = new THREE.CanvasTexture(canvas);
