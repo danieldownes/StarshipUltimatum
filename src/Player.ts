@@ -54,8 +54,10 @@ export default class Player extends Object3D {
 		this.position.add(velocity);
 	}
 
-	public applyRotationY(angle: number) {
-		this.rotation.y += angle;
+	public applyYaw(angle: number) {
+		const yawQuaternion = new THREE.Quaternion();
+		yawQuaternion.setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
+		this.quaternion.multiply(yawQuaternion);
 	}
 
 	public setRotation(x: number, y: number, z: number) {

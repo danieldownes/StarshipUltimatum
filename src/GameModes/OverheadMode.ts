@@ -25,11 +25,9 @@ export class OverheadMode implements IGameMode {
 
     exit(player: Player, camera: THREE.Object3D): void {
         console.log("Exiting Overhead Mode");
-        // Detach camera from player if it was attached
-        // Camera is added to player in this mode, so no need to remove it from scene
-        if (camera.parent === player) {
-            player.remove(camera);
-        }
+        
+        camera.parent?.remove(camera);
+        player.parent?.remove(player);
     }
 
     update(player: Player, camera: THREE.Object3D, inputKeys: InputKeys, deltaTime: number): void {
@@ -38,9 +36,9 @@ export class OverheadMode implements IGameMode {
         const moveSpeed = 5.0 * deltaTime; // Units per second
 
         if (inputKeys.LeftIsPressed()) {
-            player.applyRotationY(rotationSpeed);
+            player.applyYaw(rotationSpeed);
         } else if (inputKeys.RightIsPressed()) {
-            player.applyRotationY(-rotationSpeed);
+            player.applyYaw(-rotationSpeed);
         }
 
         const dir = player.Direction;
