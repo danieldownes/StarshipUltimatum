@@ -46,7 +46,7 @@ export default class MainScene extends THREE.Scene {
         this.availableModes.set('panScroller', new PanScrollerMode());
 
         // Set initial mode
-        this.currentMode = this.availableModes.get('overhead')!;
+        this.currentMode = this.availableModes.get('sideScroller')!;
 	}
 
 	async initialize() {

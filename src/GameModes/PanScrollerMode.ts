@@ -15,7 +15,7 @@ export class PanScrollerMode implements IGameMode {
     private field: THREE.Object3D | null = null;
 
     enter(scene: THREE.Scene, player: Player, camera: THREE.Object3D): void {
-        console.log("Entering Strive Stroller Mode");
+        console.log("Entering PanScroller Mode");
         
         // Create dummy object as the playing field
         this.field = new THREE.Object3D();
@@ -32,7 +32,7 @@ export class PanScrollerMode implements IGameMode {
     }
 
     exit(player: Player, camera: THREE.Object3D): void {
-        console.log("Exiting Strive Stroller Mode");
+        console.log("Exiting PanScroller Mode");
 
         // Preserve world position and rotation before detaching
         const playerWorldPosition = new THREE.Vector3();
